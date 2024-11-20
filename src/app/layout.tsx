@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
+
 import localFont from "next/font/local";
 import "./globals.css";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ClientAuthButton } from "@/components/ClientAuthButton";
+
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -25,10 +29,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <AuthProvider>
+          <header className="p-4 border-b">
+            <div className="container mx-auto flex justify-between items-center">
+              <h1 className="text-xl font-bold">Pokédex</h1>
+              <ClientAuthButton />
+            </div>
+          </header>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
