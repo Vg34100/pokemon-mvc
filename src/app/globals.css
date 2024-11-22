@@ -5,12 +5,15 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --pokedex-red: #ff0000;
+  --pokedex-black: #171717;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --pokedex-red: #cc0000;
   }
 }
 
@@ -18,4 +21,11 @@ body {
   color: var(--foreground);
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+@font-face {
+  font-family: 'Flexo-Demi';
+  src: url('fonts/Flexo-Demi.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
 }
