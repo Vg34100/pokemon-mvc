@@ -12,9 +12,10 @@ export default async function Home() {
 
 
   return (
-    <main className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Pokédex</h1>
-      <PokemonGrid pokemon={pokemon} />
+    <main className="min-h-screen bg-white">
+      <div className="container mx-auto p-4">
+        <PokemonGrid pokemon={pokemon} />
+      </div>
     </main>
   );
 }
