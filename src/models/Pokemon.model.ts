@@ -34,7 +34,7 @@ interface PokemonApiResponse {
       }
     }
   
-    async getAllPokemon(limit: number = 151): Promise<Pokemon[]> {
+    async getAllPokemon(limit: number = 1025): Promise<Pokemon[]> {
       try {
         const response = await fetch(
           `https://pokeapi.co/api/v2/pokemon?limit=${limit}`
