@@ -1,7 +1,7 @@
 // src/components/PokemonList.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Pokemon } from '@/models/Pokemon.model';
 import { PokemonGrid } from './PokemonGrid';
 import { SearchBar } from './SearchBar';
@@ -14,9 +14,11 @@ interface PokemonListProps {
 
 export function PokemonList({ initialPokemon }: PokemonListProps) {
   const [filteredPokemon, setFilteredPokemon] = useState(initialPokemon);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [selectedGeneration, setSelectedGeneration] = useState<number | null>(null);
+  const [filters, setFilters] = useState({
+    search: '',
+    types: [] as string[],
+    generation: null as number | null
+  });
 
   const getGenerationRange = (gen: number): [number, number] => {
     const ranges: { [key: number]: [number, number] } = {
@@ -33,57 +35,55 @@ export function PokemonList({ initialPokemon }: PokemonListProps) {
     return ranges[gen];
   };
 
-  const applyFilters = (search: string, types: string[], generation: number | null) => {
+  useEffect(() => {
     let filtered = initialPokemon;
 
     // Apply search filter
-    if (search) {
+    if (filters.search) {
       filtered = filtered.filter(pokemon => 
-        pokemon.name.toLowerCase().includes(search.toLowerCase()) ||
-        pokemon.id.toString().includes(search)
+        pokemon.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+        pokemon.id.toString().includes(filters.search)
       );
     }
 
     // Apply type filter
-    if (types.length > 0) {
+    if (filters.types.length > 0) {
       filtered = filtered.filter(pokemon =>
-        types.every(type => pokemon.types.includes(type))
+        filters.types.every(type => pokemon.types.includes(type))
       );
     }
 
     // Apply generation filter
-    if (generation) {
-        const [min, max] = getGenerationRange(generation);
-        filtered = filtered.filter(pokemon =>
-          pokemon.id >= min && pokemon.id <= max
-        );
-      }
+    if (filters.generation) {
+      const [min, max] = getGenerationRange(filters.generation);
+      filtered = filtered.filter(pokemon =>
+        pokemon.id >= min && pokemon.id <= max
+      );
+    }
 
     setFilteredPokemon(filtered);
-  };
+  }, [filters, initialPokemon]);
 
   const handleSearch = (term: string) => {
-    setSearchTerm(term);
-    applyFilters(term, selectedTypes, selectedGeneration);
+    setFilters(prev => ({ ...prev, search: term }));
   };
 
   const handleTypeSelect = (types: string[]) => {
-    setSelectedTypes(types);
-    applyFilters(searchTerm, selectedTypes, selectedGeneration);
+    setFilters(prev => ({ ...prev, types }));
   };
 
   const handleGenerationSelect = (generation: number | null) => {
-    setSelectedGeneration(generation);
-    applyFilters(searchTerm, selectedTypes, generation);
+    setFilters(prev => ({ ...prev, generation }));
   };
 
-
   return (
-    <>
+    <div className="space-y-4">
       <SearchBar onSearch={handleSearch} />
-      <TypeFilter onTypeSelect={handleTypeSelect} />
-      <GenerationFilter  onGenerationSelect={handleGenerationSelect} />
+      <div className="flex flex-wrap gap-4">
+        <TypeFilter onTypeSelect={handleTypeSelect} />
+        <GenerationFilter onGenerationSelect={handleGenerationSelect} />
+      </div>
       <PokemonGrid pokemon={filteredPokemon} />
-    </>
+    </div>
   );
 }
