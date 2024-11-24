@@ -1,5 +1,6 @@
 // src/components/ItemsGrid.tsx
 import Image from 'next/image';
+import { Package } from 'lucide-react';
 import { Item } from "@/models/Item.model";
 
 export function ItemsGrid({ items }: { items: Item[] }) {
@@ -12,11 +13,20 @@ export function ItemsGrid({ items }: { items: Item[] }) {
         >
           <div className="flex items-center gap-4 mb-3">
             <div className="relative w-12 h-12">
+              {/* Fallback will show if image fails to load */}
+              <Package 
+                className="absolute inset-0 text-gray-400 bg-gray-100 p-2 rounded"
+                size={48}
+              />
               <Image
                 src={item.sprite}
                 alt={item.name}
                 fill
                 className="object-contain"
+                onError={(e) => {
+                  // Hide the image on error
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
               />
             </div>
             <div>
