@@ -1,6 +1,6 @@
 // src/app/moves/page.tsx
-import { MovesGrid } from "@/components/MovesGrid";
 import { MoveController } from "@/controllers/Move.controller";
+import { MovesList } from "@/components/MovesList";
 
 export default async function MovesPage() {
   const controller = new MoveController();
@@ -10,10 +10,10 @@ export default async function MovesPage() {
   if (!moves) return <div>Loading...</div>;
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-white text-black">
       <div className="container mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-6 text-black">Pokémon Moves</h1>
-        <MovesGrid moves={moves} />
+        <h1 className="text-2xl font-bold mb-6">Pokémon Moves</h1>
+        <MovesList moves={moves} />
       </div>
     </main>
   );
