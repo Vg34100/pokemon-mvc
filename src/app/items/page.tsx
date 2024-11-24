@@ -1,5 +1,5 @@
-import { ItemsGrid } from "@/components/ItemsGrid";
 import { ItemController } from "@/controllers/Item.controller";
+import { ItemsList } from "@/components/ItemsList";
 
 export default async function ItemsPage() {
   const controller = new ItemController();
@@ -12,7 +12,7 @@ export default async function ItemsPage() {
     <main className="min-h-screen bg-white">
       <div className="container mx-auto p-4 text-black">
         <h1 className="text-2xl font-bold mb-6">Pokémon Items</h1>
-        <ItemsGrid items={items} />
+        <ItemsList items={items} />
       </div>
     </main>
   );
