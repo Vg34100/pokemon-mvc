@@ -1,3 +1,4 @@
+// src/models/Nature.model.ts
 interface NatureApiResponse {
     id: number;
     name: string;
@@ -9,10 +10,10 @@ interface NatureApiResponse {
     } | null;
     likes_flavor: {
       name: string;
-    };
+    } | null;
     hates_flavor: {
       name: string;
-    };
+    } | null;
   }
   
   export interface Nature {
@@ -20,8 +21,8 @@ interface NatureApiResponse {
     name: string;
     increasedStat: string | null;
     decreasedStat: string | null;
-    likesFlavor: string;
-    hatesFlavor: string;
+    likesFlavor: string | null;
+    hatesFlavor: string | null;
   }
   
   export class NatureModel {
@@ -53,8 +54,8 @@ interface NatureApiResponse {
                 this.formatStatName(natureData.increased_stat.name) : null,
               decreasedStat: natureData.decreased_stat ? 
                 this.formatStatName(natureData.decreased_stat.name) : null,
-              likesFlavor: natureData.likes_flavor.name,
-              hatesFlavor: natureData.hates_flavor.name
+              likesFlavor: natureData.likes_flavor?.name || null,
+              hatesFlavor: natureData.hates_flavor?.name || null
             };
           })
         );
