@@ -1,7 +1,7 @@
 // src/components/PokemonGrid.tsx
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Pokemon } from '@/models/Pokemon.model';
 import { useAuth } from '@/contexts/AuthContext';
 import { LocalStorageService } from '@/services/LocalStorage.service';
@@ -14,21 +14,17 @@ interface PokemonGridProps {
   selectedGameId: number | null;
 }
 
-/**
- * Grid display of Pokemon with caught status tracking
- * Integrates with auth system and storage service for persistence
- */
 export function PokemonGrid({ pokemon, selectedGameId }: PokemonGridProps) {
   const { username } = useAuth();
-  // const [caughtService] = useState<IDatabaseService>(() => new LocalStorageService());
   const [caughtService] = useState<IDatabaseService>(() => 
     process.env.NEXT_PUBLIC_USE_LOCAL_STORAGE === 'true' 
       ? new LocalStorageService() 
       : new DatabaseService()
   );
   const [caughtPokemon, setCaughtPokemon] = useState<number[]>([]);
+  const [isLoading, setIsLoading] = useState<{ [key: number]: boolean }>({});
 
-  // Load caught Pokemon on mount and when game/user changes
+  // Load caught Pokemon once when game/user changes
   useEffect(() => {
     const loadCaughtPokemon = async () => {
       if (selectedGameId && username) {
@@ -42,38 +38,38 @@ export function PokemonGrid({ pokemon, selectedGameId }: PokemonGridProps) {
     loadCaughtPokemon();
   }, [selectedGameId, username, caughtService]);
 
-  /**
-   * Handles toggling the caught status of a Pokemon
-   */
-  const toggleCaught = async (pokemonId: number, event: React.MouseEvent) => {
+  const toggleCaught = useCallback(async (pokemonId: number, event: React.MouseEvent) => {
     event.preventDefault();
     if (!selectedGameId || !username) return;
 
-    const isCaught = await caughtService.isPokemonCaught(
-      username, 
-      selectedGameId, 
-      pokemonId
-    );
-    
-    if (isCaught) {
-      await caughtService.removeCaughtPokemon(username, selectedGameId, pokemonId);
-    } else {
-      await caughtService.saveCaughtPokemon({
-        userId: username,
-        gameId: selectedGameId,
-        pokemonId
-      });
+    setIsLoading(prev => ({ ...prev, [pokemonId]: true }));
+
+    try {
+      const isCaught = caughtPokemon.includes(pokemonId);
+      
+      if (isCaught) {
+        await caughtService.removeCaughtPokemon(username, selectedGameId, pokemonId);
+        setCaughtPokemon(prev => prev.filter(id => id !== pokemonId));
+      } else {
+        await caughtService.saveCaughtPokemon({
+          userId: username,
+          gameId: selectedGameId,
+          pokemonId
+        });
+        setCaughtPokemon(prev => [...prev, pokemonId]);
+      }
+    } catch (error) {
+      console.error('Error toggling Pokemon:', error);
+    } finally {
+      setIsLoading(prev => ({ ...prev, [pokemonId]: false }));
     }
-    
-    // Refresh caught Pokemon list
-    const caught = await caughtService.getCaughtPokemon(username, selectedGameId);
-    setCaughtPokemon(caught);
-  };
+  }, [selectedGameId, username, caughtService, caughtPokemon]);
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
       {pokemon.map((p) => {
         const isCaught = caughtPokemon.includes(p.id);
+        const isProcessing = isLoading[p.id];
         
         return (
           <div
@@ -89,7 +85,6 @@ export function PokemonGrid({ pokemon, selectedGameId }: PokemonGridProps) {
                 #{p.id.toString().padStart(4, "0")}
               </p>
               
-              {/* Caught indicator */}
               {isCaught && (
                 <div className="absolute top-2 right-2">
                   <Check className="w-5 h-5 text-green-500" />
@@ -110,23 +105,23 @@ export function PokemonGrid({ pokemon, selectedGameId }: PokemonGridProps) {
               <h2 className="mt-2 capitalize font-medium text-black">{p.name}</h2>
             </Link>
 
-            {/* Catch button - only shown when logged in */}
             {selectedGameId && username && (
               <button
                 onClick={(e) => toggleCaught(p.id, e)}
+                disabled={isProcessing}
                 className={`mt-3 px-3 py-1.5 rounded-full text-sm font-medium
                   flex items-center justify-center gap-2 w-full transition-colors
+                  ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}
                   ${isCaught
                     ? 'bg-green-100 text-green-700 hover:bg-green-200'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}
               >
                 <CheckCheck className="w-4 h-4" />
-                {isCaught ? 'Caught!' : 'Catch'}
+                {isProcessing ? 'Processing...' : isCaught ? 'Caught!' : 'Catch'}
               </button>
             )}
             
-            {/* Login prompt */}
             {selectedGameId && !username && (
               <div className="mt-3 text-xs text-gray-500">
                 Login to track catches

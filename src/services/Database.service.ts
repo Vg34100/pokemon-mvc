@@ -48,16 +48,10 @@ export class DatabaseService implements IDatabaseService {
         }
     }
 
-    async isPokemonCaught(userId: string, gameId: number, pokemonId: number): Promise<boolean> {
-        try {
-            const response = await api.get<{ caught: boolean }>(`/caught-pokemon/check/${pokemonId}/${gameId}/`);
-            return response.data.caught;
-        } catch (error) {
-            if (error instanceof AxiosError && error.response?.data) {
-                const apiError = error.response.data as ApiError;
-                throw new Error(apiError.error);
-            }
-            throw new Error('Failed to check Pokemon status');
-        }
+    // src/services/Database.service.ts
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async isPokemonCaught(_userId: string, _gameId: number, _pokemonId: number): Promise<boolean> {
+        // This is kept only for interface compliance but is no longer used
+        return false;
     }
 }
