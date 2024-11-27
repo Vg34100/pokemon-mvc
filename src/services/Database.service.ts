@@ -1,84 +1,63 @@
 // src/services/Database.service.ts
 import { CaughtPokemon, IDatabaseService } from "./Database.interface";
+import api from "@/api/api";
+import { AxiosError } from "axios";
+
+interface ApiError {
+  error: string;
+}
 
 export class DatabaseService implements IDatabaseService {
-    private baseUrl = 'http://silverpi.ddns.net:54321';
-
     async saveCaughtPokemon(data: Omit<CaughtPokemon, 'caughtDate'>): Promise<void> {
-        const response = await fetch(`${this.baseUrl}/caught-pokemon/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            credentials: 'include',
-            body: JSON.stringify({
+        try {
+            await api.post('/caught-pokemon/', {
                 pokemonId: data.pokemonId,
                 gameId: data.gameId
-            })
-        });
-
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Failed to save caught Pokemon');
+            });
+        } catch (error) {
+            if (error instanceof AxiosError && error.response?.data) {
+                const apiError = error.response.data as ApiError;
+                throw new Error(apiError.error);
+            }
+            throw new Error('Failed to save caught Pokemon');
         }
     }
 
     async removeCaughtPokemon(userId: string, gameId: number, pokemonId: number): Promise<void> {
-        const response = await fetch(
-            `${this.baseUrl}/caught-pokemon/${pokemonId}/${gameId}/`,
-            {
-                method: 'DELETE',
-                credentials: 'include',
-                headers: {
-                    'Accept': 'application/json',
-                }
+        try {
+            await api.delete(`/caught-pokemon/${pokemonId}/${gameId}/`);
+        } catch (error) {
+            if (error instanceof AxiosError && error.response?.data) {
+                const apiError = error.response.data as ApiError;
+                throw new Error(apiError.error);
             }
-        );
-
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Failed to remove caught Pokemon');
+            throw new Error('Failed to remove caught Pokemon');
         }
     }
 
     async getCaughtPokemon(userId: string, gameId: number): Promise<number[]> {
-        const response = await fetch(
-            `${this.baseUrl}/caught-pokemon/game/${gameId}/`,
-            {
-                credentials: 'include',
-                headers: {
-                    'Accept': 'application/json',
-                }
+        try {
+            const response = await api.get<{ pokemon: number[] }>(`/caught-pokemon/game/${gameId}/`);
+            return response.data.pokemon;
+        } catch (error) {
+            if (error instanceof AxiosError && error.response?.data) {
+                const apiError = error.response.data as ApiError;
+                throw new Error(apiError.error);
             }
-        );
-
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Failed to get caught Pokemon');
+            throw new Error('Failed to get caught Pokemon');
         }
-
-        const data = await response.json();
-        return data.pokemon;
     }
 
     async isPokemonCaught(userId: string, gameId: number, pokemonId: number): Promise<boolean> {
-        const response = await fetch(
-            `${this.baseUrl}/caught-pokemon/check/${pokemonId}/${gameId}/`,
-            {
-                credentials: 'include',
-                headers: {
-                    'Accept': 'application/json',
-                }
+        try {
+            const response = await api.get<{ caught: boolean }>(`/caught-pokemon/check/${pokemonId}/${gameId}/`);
+            return response.data.caught;
+        } catch (error) {
+            if (error instanceof AxiosError && error.response?.data) {
+                const apiError = error.response.data as ApiError;
+                throw new Error(apiError.error);
             }
-        );
-
-        if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Failed to check Pokemon status');
+            throw new Error('Failed to check Pokemon status');
         }
-
-        const data = await response.json();
-        return data.caught;
     }
 }
