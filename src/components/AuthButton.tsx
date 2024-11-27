@@ -20,7 +20,7 @@ export function AuthButton({ username, onLogin, onLogout, onRegister }: AuthButt
     e.preventDefault();
     setError('');
     setIsLoading(true);
-    
+
     try {
       if (isRegistering) {
         await onRegister(formData.username, formData.password);
@@ -47,22 +47,18 @@ export function AuthButton({ username, onLogin, onLogout, onRegister }: AuthButt
     }
   };
 
-  if (username) {
-    return (
-      <div className="flex items-center gap-4">
-        <span className="text-sm">Welcome, {username}</span>
-        <button
-          onClick={handleLogout}
-          disabled={isLoading}
-          className={`px-4 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed`}
-        >
-          {isLoading ? 'Logging out...' : 'Logout'}
-        </button>
-      </div>
-    );
-  }
-
-  return (
+  return username ? (
+    <div className="flex items-center gap-4">
+      <span className="text-sm">Welcome, {username}</span>
+      <button
+        onClick={handleLogout}
+        disabled={isLoading}
+        className={`px-4 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed`}
+      >
+        {isLoading ? 'Logging out...' : 'Logout'}
+      </button>
+    </div>
+  ) : (
     <div>
       <button
         onClick={() => setIsModalOpen(true)}
@@ -77,7 +73,7 @@ export function AuthButton({ username, onLogin, onLogout, onRegister }: AuthButt
             <h2 className="text-xl font-bold mb-4 text-white">
               {isRegistering ? 'Create Account' : 'Login'}
             </h2>
-            
+
             {error && (
               <div className="mb-4 p-2 bg-red-900 text-red-200 rounded">
                 {error}
@@ -90,19 +86,19 @@ export function AuthButton({ username, onLogin, onLogout, onRegister }: AuthButt
                 <input
                   type="text"
                   value={formData.username}
-                  onChange={(e) => setFormData(prev => ({ ...prev, username: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, username: e.target.value }))}
                   className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700"
                   required
                   disabled={isLoading}
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium mb-1 text-white">Password</label>
                 <input
                   type="password"
                   value={formData.password}
-                  onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
                   className="w-full p-2 border rounded bg-gray-800 text-white border-gray-700"
                   required
                   disabled={isLoading}
@@ -115,9 +111,7 @@ export function AuthButton({ username, onLogin, onLogout, onRegister }: AuthButt
                   disabled={isLoading}
                   className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isLoading 
-                    ? (isRegistering ? 'Creating Account...' : 'Logging in...') 
-                    : (isRegistering ? 'Register' : 'Login')}
+                  {isLoading ? (isRegistering ? 'Creating Account...' : 'Logging in...') : (isRegistering ? 'Register' : 'Login')}
                 </button>
                 <button
                   type="button"
