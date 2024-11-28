@@ -9,7 +9,7 @@ export class DescriptionController {
   }
 
   async getDescription(id: number): Promise<{
-    data: Description | null;
+    data: { description: string } | null;
     error: string | null;
   }> {
     try {
