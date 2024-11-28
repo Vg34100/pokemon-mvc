@@ -23,22 +23,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const logout = async () => {
-    await api.post("/logout/");
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    setUsername(null);
+    try {
+      const refreshToken = localStorage.getItem("refresh_token");
+      if (refreshToken) {
+        await api.post("/logout/", { refresh: refreshToken });
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Always clear local storage and state, even if the API call fails
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      setUsername(null);
+    }
   };
 
   const register = async (username: string, password: string) => {
-    await api.post("/register/", { username, password });
-    await login(username, password);
+    const res = await api.post("/register/", { username, password });
+    localStorage.setItem("access_token", res.data.access);
+    localStorage.setItem("refresh_token", res.data.refresh);
+    setUsername(username);
   };
 
   const checkSession = async () => {
+    const token = localStorage.getItem("access_token");
+    if (!token) {
+      setUsername(null);
+      return;
+    }
+
     try {
       const res = await api.get("/check-session/");
       setUsername(res.data.username);
-    } catch {
+    } catch (error) {
+      console.log(error)
+      // If session check fails, clear everything
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
       setUsername(null);
     }
   };
