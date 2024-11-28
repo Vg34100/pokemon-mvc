@@ -74,7 +74,7 @@ export function PokemonGrid({ pokemon, selectedGameId }: PokemonGridProps) {
         return (
           <div
             key={p.id}
-            className={`relative bg-white rounded-lg p-4 text-center transition-all
+            className={`relative border bg-white rounded-lg p-4 text-center transition-all
               ${isCaught 
                 ? 'ring-2 ring-green-500 shadow-lg' 
                 : 'hover:shadow-lg'
@@ -102,7 +102,7 @@ export function PokemonGrid({ pokemon, selectedGameId }: PokemonGridProps) {
                     ${isCaught ? 'opacity-100' : 'opacity-75'}`}
                 />
               </div>
-              <h2 className="mt-2 capitalize font-medium text-black">{p.name}</h2>
+              <h2 className="mt-2 capitalize font-medium font-pokemon text-black">{p.name}</h2>
             </Link>
 
             {selectedGameId && username && (
