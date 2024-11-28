@@ -22,14 +22,14 @@ export default function Home() {
             link: "/moves",
             bgColor: "bg-yellow-400",
             icon: "/images/moves.png",
-            size: "col-span-1, row-span-3",
+            size: "col-span-1 row-span-3",
         },
         {
             title: "Natures",
             link: "/natures",
             bgColor: "bg-purple-400",
             icon: "/images/natures.png",
-            size: "col-span-1, row-span-4",
+            size: "col-span-1 row-span-4",
         },
         {
             title: "Abilities",
@@ -49,7 +49,7 @@ export default function Home() {
 
     return (
         <div className="min-h-screen bg-white">
-            <div className="grid grid-cols-5 gap-6 p-6 auto-rows-[minmax(150px,1fr)]">
+            <div className="grid grid-cols-5 gap-6 p-6 h-[calc(100vh-3rem)] auto-rows-[minmax(150px,1fr)]">
                 {sections.map((section, index) => (
                     <Link
                         key={index}
@@ -65,17 +65,16 @@ export default function Home() {
                                         ? 220
                                         : section.title === "Natures"
                                             ? 120
-                                            : section.title == "Moves"
+                                            : section.title === "Moves"
                                                 ? 76
                                                 : 64
-
                                 }
                                 height={
                                     section.title === "Parties"
                                         ? 200
                                         : section.title === "Natures"
                                             ? 110
-                                            : section.title == "Moves"
+                                            : section.title === "Moves"
                                                 ? 76
                                                 : 64
                                 }
