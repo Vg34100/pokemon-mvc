@@ -1,5 +1,10 @@
 // src/controllers/Pokemon.controller.ts
-import { PokemonModel, Pokemon } from '@/models/Pokemon.model';
+import { PokemonModel, PaginatedPokemonResponse } from '@/models/Pokemon.model';
+
+export interface PokemonListResponse {
+  data: PaginatedPokemonResponse | null;
+  error: string | null;
+}
 
 export class PokemonController {
   private model: PokemonModel;
@@ -8,13 +13,10 @@ export class PokemonController {
     this.model = new PokemonModel();
   }
 
-  async getPokemonList(): Promise<{
-    data: Pokemon[] | null;
-    error: string | null;
-  }> {
+  async getPokemonList(limit: number = 30, offset: number = 0): Promise<PokemonListResponse> {
     try {
-      const pokemon = await this.model.getAllPokemon();
-      return { data: pokemon, error: null };
+      const paginatedData = await this.model.getAllPokemon(limit, offset);
+      return { data: paginatedData, error: null };
     } catch (err) {
       console.error('Controller error:', err);
       return { data: null, error: 'Failed to load Pokemon' };
