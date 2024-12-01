@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // src/services/Database.service.ts
-import { CaughtPokemon, IDatabaseService } from "./Database.interface";
-import api from "@/api/api";
+import { IDatabaseService, CaughtPokemon, Party } from './Database.interface';import api from "@/api/api";
 import { AxiosError } from "axios";
 
 interface ApiError {
@@ -53,5 +53,49 @@ export class DatabaseService implements IDatabaseService {
     async isPokemonCaught(_userId: string, _gameId: number, _pokemonId: number): Promise<boolean> {
         // This is kept only for interface compliance but is no longer used
         return false;
+    }
+
+
+    // Party stuff
+        async getParties(userId: string): Promise<Party[]> {
+        // TODO: Implement when API is ready
+        throw new Error('Not implemented');
+        // try {
+        //     const response = await api.get<{ parties: Party[] }>(`/parties/`);
+        //     return response.data.parties;
+        // } catch (error) {
+        //     throw new Error('Failed to get parties');
+        // }
+    }
+
+    async saveParty(party: Omit<Party, 'id' | 'createdAt' | 'updatedAt'>): Promise<Party> {
+        // TODO: Implement when API is ready
+        throw new Error('Not implemented');
+        // try {
+        //     const response = await api.post<Party>('/parties/', party);
+        //     return response.data;
+        // } catch (error) {
+        //     throw new Error('Failed to save party');
+        // }
+    }
+
+    async updateParty(party: Party): Promise<void> {
+        // TODO: Implement when API is ready
+        throw new Error('Not implemented');
+        // try {
+        //     await api.put(`/parties/${party.id}/`, party);
+        // } catch (error) {
+        //     throw new Error('Failed to update party');
+        // }
+    }
+
+    async deleteParty(userId: string, partyId: string): Promise<void> {
+        // TODO: Implement when API is ready
+        throw new Error('Not implemented');
+        // try {
+        //     await api.delete(`/parties/${partyId}/`);
+        // } catch (error) {
+        //     throw new Error('Failed to delete party');
+        // }
     }
 }
