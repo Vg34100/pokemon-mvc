@@ -7,9 +7,13 @@ export class PartyController {
   private service: IDatabaseService;
 
   constructor() {
-    this.service = process.env.NEXT_PUBLIC_USE_LOCAL_STORAGE === 'true'
-      ? new LocalStorageService()
-      : new DatabaseService();
+    // this.service = process.env.NEXT_PUBLIC_USE_LOCAL_STORAGE === 'true'
+    //   ? new LocalStorageService()
+    //   : new DatabaseService();
+    const temp = 'true';
+    this.service = temp === 'true'
+    ? new LocalStorageService()
+    : new DatabaseService();
   }
 
   async getUserParties(userId: string): Promise<{
