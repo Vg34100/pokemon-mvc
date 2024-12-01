@@ -8,12 +8,12 @@ export class PokemonController {
     this.model = new PokemonModel();
   }
 
-  async getPokemonList(): Promise<{
+  async getPokemonList(limit: number = 30, offset: number = 0): Promise<{
     data: Pokemon[] | null;
     error: string | null;
   }> {
     try {
-      const pokemon = await this.model.getAllPokemon();
+      const pokemon = await this.model.getAllPokemon(limit, offset);
       return { data: pokemon, error: null };
     } catch (err) {
       console.error('Controller error:', err);
