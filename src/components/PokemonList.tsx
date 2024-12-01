@@ -118,7 +118,11 @@ export function PokemonList({ initialPokemon }: PokemonListProps) {
       }
 
       filtered.sort((a, b) => a.id - b.id);
-      setDisplayedPokemon(filtered.slice(0, 30));
+      
+      // Only reset displayed Pokemon if filters change
+      if (displayedPokemon.length === 0) {
+        setDisplayedPokemon(filtered.slice(0, 30));
+      }
     };
 
     applyFilters();
@@ -127,13 +131,12 @@ export function PokemonList({ initialPokemon }: PokemonListProps) {
   // Load more filtered results
   useEffect(() => {
     if (!loading && filteredPokemon.length > displayedPokemon.length) {
-      const nextBatch = filteredPokemon.slice(
-        0,
-        displayedPokemon.length + 30
-      );
-      setDisplayedPokemon(nextBatch);
+      setDisplayedPokemon(prev => {
+        const nextBatch = filteredPokemon.slice(0, prev.length + 30);
+        return nextBatch;
+      });
     }
-  }, [filteredPokemon, displayedPokemon, loading]);
+  }, [filteredPokemon, displayedPokemon.length, loading]);
 
   // Save and restore scroll position
   useEffect(() => {
