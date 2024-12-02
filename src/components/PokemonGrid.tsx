@@ -17,9 +17,9 @@ interface PokemonGridProps {
 
 export function PokemonGrid({ pokemon, selectedGameId, dexNumbers }: PokemonGridProps) {
   const { username } = useAuth();
-  const [caughtService] = useState<IDatabaseService>(() => 
-    process.env.NEXT_PUBLIC_USE_LOCAL_STORAGE === 'true' 
-      ? new LocalStorageService() 
+  const [caughtService] = useState<IDatabaseService>(() =>
+    process.env.NEXT_PUBLIC_USE_LOCAL_STORAGE === 'true'
+      ? new LocalStorageService()
       : new DatabaseService()
   );
   const [caughtPokemon, setCaughtPokemon] = useState<number[]>([]);
@@ -46,7 +46,7 @@ export function PokemonGrid({ pokemon, selectedGameId, dexNumbers }: PokemonGrid
 
     try {
       const isCaught = caughtPokemon.includes(pokemonId);
-      
+
       if (isCaught) {
         await caughtService.removeCaughtPokemon(username, selectedGameId, pokemonId);
         setCaughtPokemon(prev => prev.filter(id => id !== pokemonId));
@@ -71,13 +71,13 @@ export function PokemonGrid({ pokemon, selectedGameId, dexNumbers }: PokemonGrid
         const isCaught = caughtPokemon.includes(p.id);
         const isProcessing = isLoading[p.id];
         const dexNumber = selectedGameId && dexNumbers[p.id] ? dexNumbers[p.id] : p.id;
-        
+
         return (
           <div
             key={p.id}
             className={`relative border bg-white rounded-lg p-4 text-center transition-all
-              ${isCaught 
-                ? 'ring-2 ring-green-500 shadow-lg' 
+              ${isCaught
+                ? 'ring-2 ring-green-500 shadow-lg'
                 : 'hover:shadow-lg'
               }`}
           >
@@ -90,13 +90,13 @@ export function PokemonGrid({ pokemon, selectedGameId, dexNumbers }: PokemonGrid
                   </span>
                 )}
               </p>
-              
+
               {isCaught && (
                 <div className="absolute top-2 right-2">
                   <Check className="w-5 h-5 text-green-500" />
                 </div>
               )}
-              
+
               <div className="relative w-full h-24 mx-auto">
                 <Image
                   src={p.sprite}
@@ -105,7 +105,12 @@ export function PokemonGrid({ pokemon, selectedGameId, dexNumbers }: PokemonGrid
                   sizes="(max-width: 96px) 100vw, 96px"
                   priority={p.id <= 12}
                   className={`object-contain transition-opacity duration-200
-                    ${isCaught ? 'opacity-100' : 'opacity-75'}`}
+                    ${!selectedGameId
+                      ? 'opacity-100'
+                      : isCaught
+                        ? 'opacity-100'
+                        : 'opacity-75'
+                    }`}
                 />
               </div>
               <h2 className="mt-2 capitalize font-medium font-pokemon text-black">{p.name}</h2>
@@ -127,7 +132,7 @@ export function PokemonGrid({ pokemon, selectedGameId, dexNumbers }: PokemonGrid
                 {isProcessing ? 'Processing...' : isCaught ? 'Caught!' : 'Catch'}
               </button>
             )}
-            
+
             {selectedGameId && !username && (
               <div className="mt-3 text-xs text-gray-500">
                 Login to track catches
