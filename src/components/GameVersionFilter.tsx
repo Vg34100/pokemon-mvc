@@ -4,7 +4,7 @@
 import { useState, useEffect } from 'react';
 import { Game } from '@/models/Game.model';
 import { Gamepad2 } from 'lucide-react';
-import { GameController } from '@/controllers/Game.controller';
+import { GameController } from '@/controllers/Game.Controller';
 
 interface GameVersionFilterProps {
   onGameSelect: (gameId: number | null) => void;

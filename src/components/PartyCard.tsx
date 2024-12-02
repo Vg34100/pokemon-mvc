@@ -7,7 +7,7 @@ import { Party } from '@/services/Database.interface';
 import { PartyController } from '@/controllers/Party.controller';
 import { Trash2, Plus } from 'lucide-react';
 import { SelectPokemonModal } from './SelectPokemonModal';
-import { GameController } from '@/controllers/Game.controller';
+import { GameController } from '@/controllers/Game.Controller';
 
 interface PartyCardProps {
   party: Party;

@@ -9,7 +9,7 @@ import { TypeFilter } from './TypeFilter';
 import { GenerationFilter } from './GenerationFilter';
 import { GameVersionFilter } from './GameVersionFilter';
 import { LoadingState } from './LoadingState';
-import { GameController } from '@/controllers/Game.controller';
+import { GameController } from '@/controllers/Game.Controller';
 
 interface PokemonListProps {
   initialPokemon: Pokemon[];
