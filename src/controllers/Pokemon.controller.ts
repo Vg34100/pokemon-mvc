@@ -5,7 +5,7 @@ export class PokemonController {
   private model: PokemonModel;
 
   constructor() {
-    this.model = new PokemonModel();
+    this.model = PokemonModel.getInstance();  // Use singleton instance
   }
 
   async getPokemonList(): Promise<{
@@ -19,5 +19,9 @@ export class PokemonController {
       console.error('Controller error:', err);
       return { data: null, error: 'Failed to load Pokemon' };
     }
+  }
+
+  clearCache(): void {
+    this.model.clearCache();
   }
 }

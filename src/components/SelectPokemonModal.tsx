@@ -46,11 +46,10 @@ export function SelectPokemonModal({
       if (pokemonResult.error) throw new Error(pokemonResult.error);
       if (versionResult.error) throw new Error(versionResult.error);
       if (!pokemonResult.data || !versionResult.data) throw new Error('Failed to load data');
-      if (!versionResult.data) throw new Error('Failed to load version data');
 
       // Filter Pokemon available in this game version
       const availablePokemon = pokemonResult.data.filter(p => 
-        versionResult.data!.includes(p.id)  // Using ! to assert non-null
+        versionResult.data!.includes(p.id)
       );
 
       setPokemon(availablePokemon);
@@ -72,7 +71,7 @@ export function SelectPokemonModal({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[80vh] relative">
+      <div className="bg-white rounded-lg p-6 w-full max-w-4xl max-h-[90vh] relative">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
@@ -89,24 +88,26 @@ export function SelectPokemonModal({
         ) : error ? (
           <div className="text-red-500 text-center py-8">{error}</div>
         ) : (
-          <div className="grid grid-cols-4 gap-4 mt-4 max-h-[60vh] overflow-y-auto">
-            {filteredPokemon.map((p) => (
-              <button
-                key={p.id}
-                onClick={() => onSelect(p.id)}
-                className="p-2 border rounded-lg hover:bg-gray-50 text-center"
-              >
-                <Image
-                  src={p.sprite}
-                  alt={p.name}
-                  width={64}
-                  height={64}
-                  className="mx-auto"
-                />
-                <p className="mt-1 text-sm capitalize">{p.name}</p>
-                <p className="text-xs text-gray-500">#{p.id}</p>
-              </button>
-            ))}
+          <div className="overflow-y-auto mt-4" style={{ maxHeight: 'calc(90vh - 180px)' }}>
+            <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-4">
+              {filteredPokemon.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => onSelect(p.id)}
+                  className="p-2 border rounded-lg hover:bg-gray-50 text-center"
+                >
+                  <Image
+                    src={p.sprite}
+                    alt={p.name}
+                    width={64}
+                    height={64}
+                    className="mx-auto"
+                  />
+                  <p className="mt-1 text-sm capitalize">{p.name}</p>
+                  <p className="text-xs text-gray-500">#{p.id}</p>
+                </button>
+              ))}
+            </div>
           </div>
         )}
       </div>
