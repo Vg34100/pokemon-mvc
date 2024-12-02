@@ -12,9 +12,10 @@ import { DatabaseService } from '@/services/Database.service';
 interface PokemonGridProps {
   pokemon: Pokemon[];
   selectedGameId: number | null;
+  dexNumbers: { [key: number]: number };
 }
 
-export function PokemonGrid({ pokemon, selectedGameId }: PokemonGridProps) {
+export function PokemonGrid({ pokemon, selectedGameId, dexNumbers }: PokemonGridProps) {
   const { username } = useAuth();
   const [caughtService] = useState<IDatabaseService>(() => 
     process.env.NEXT_PUBLIC_USE_LOCAL_STORAGE === 'true' 
@@ -24,7 +25,6 @@ export function PokemonGrid({ pokemon, selectedGameId }: PokemonGridProps) {
   const [caughtPokemon, setCaughtPokemon] = useState<number[]>([]);
   const [isLoading, setIsLoading] = useState<{ [key: number]: boolean }>({});
 
-  // Load caught Pokemon once when game/user changes
   useEffect(() => {
     const loadCaughtPokemon = async () => {
       if (selectedGameId && username) {
@@ -70,6 +70,7 @@ export function PokemonGrid({ pokemon, selectedGameId }: PokemonGridProps) {
       {pokemon.map((p) => {
         const isCaught = caughtPokemon.includes(p.id);
         const isProcessing = isLoading[p.id];
+        const dexNumber = selectedGameId && dexNumbers[p.id] ? dexNumbers[p.id] : p.id;
         
         return (
           <div
@@ -82,7 +83,12 @@ export function PokemonGrid({ pokemon, selectedGameId }: PokemonGridProps) {
           >
             <Link href={`/pokemon/${p.id}`} className="block">
               <p className="absolute top-2 left-2 text-sm text-gray-500">
-                #{p.id.toString().padStart(4, "0")}
+                #{dexNumber.toString().padStart(4, "0")}
+                {selectedGameId && dexNumbers[p.id] && (
+                  <span className="text-xs ml-2 text-gray-400">
+                    (#{p.id})
+                  </span>
+                )}
               </p>
               
               {isCaught && (
