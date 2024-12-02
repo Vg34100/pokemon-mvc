@@ -24,6 +24,7 @@ export function SelectPokemonModal({
   const [filteredPokemon, setFilteredPokemon] = useState<Pokemon[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [dexNumbers, setDexNumbers] = useState<{ [key: number]: number }>({});
 
   useEffect(() => {
     loadPokemon();
@@ -34,7 +35,6 @@ export function SelectPokemonModal({
     setError(null);
 
     try {
-      // Load all Pokemon
       const pokemonController = new PokemonController();
       const gameController = new GameController();
 
@@ -48,9 +48,17 @@ export function SelectPokemonModal({
       if (!pokemonResult.data || !versionResult.data) throw new Error('Failed to load data');
 
       // Filter Pokemon available in this game version
-      const availablePokemon = pokemonResult.data.filter(p => 
+      let availablePokemon = pokemonResult.data.filter(p => 
         versionResult.data!.includes(p.id)
       );
+
+      // Sort by regional dex number if available
+      if (versionResult.dexNumbers) {
+        setDexNumbers(versionResult.dexNumbers);
+        availablePokemon = availablePokemon.sort((a, b) => 
+          (versionResult.dexNumbers![a.id] || a.id) - (versionResult.dexNumbers![b.id] || b.id)
+        );
+      }
 
       setPokemon(availablePokemon);
       setFilteredPokemon(availablePokemon);
@@ -90,23 +98,33 @@ export function SelectPokemonModal({
         ) : (
           <div className="overflow-y-auto mt-4" style={{ maxHeight: 'calc(90vh - 180px)' }}>
             <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-8 gap-4">
-              {filteredPokemon.map((p) => (
-                <button
-                  key={p.id}
-                  onClick={() => onSelect(p.id)}
-                  className="p-2 border rounded-lg hover:bg-gray-50 text-center"
-                >
-                  <Image
-                    src={p.sprite}
-                    alt={p.name}
-                    width={64}
-                    height={64}
-                    className="mx-auto"
-                  />
-                  <p className="mt-1 text-sm capitalize">{p.name}</p>
-                  <p className="text-xs text-gray-500">#{p.id}</p>
-                </button>
-              ))}
+              {filteredPokemon.map((p) => {
+                const dexNumber = dexNumbers[p.id] || p.id;
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() => onSelect(p.id)}
+                    className="p-2 border rounded-lg hover:bg-gray-50 text-center"
+                  >
+                    <Image
+                      src={p.sprite}
+                      alt={p.name}
+                      width={64}
+                      height={64}
+                      className="mx-auto"
+                    />
+                    <p className="mt-1 text-sm capitalize">{p.name}</p>
+                    <p className="text-xs text-gray-500">
+                      #{dexNumber.toString().padStart(3, "0")}
+                      {dexNumbers[p.id] && (
+                        <span className="ml-1 text-gray-400">
+                          (#{p.id})
+                        </span>
+                      )}
+                    </p>
+                  </button>
+                );
+              })}
             </div>
           </div>
         )}

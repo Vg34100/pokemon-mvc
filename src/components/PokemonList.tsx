@@ -30,13 +30,10 @@ const getGenerationRange = (gen: number): [number, number] => {
   return ranges[gen];
 };
 
-/**
- * Main Pokemon list component with filtering capabilities
- * Handles game version, type, and generation filters
- */
 export function PokemonList({ initialPokemon }: PokemonListProps) {
   const [filteredPokemon, setFilteredPokemon] = useState(initialPokemon);
   const [loading, setLoading] = useState(false);
+  const [dexNumbers, setDexNumbers] = useState<{ [key: number]: number }>({});
   const [filters, setFilters] = useState({
     search: '',
     types: [] as string[],
@@ -44,7 +41,6 @@ export function PokemonList({ initialPokemon }: PokemonListProps) {
     gameId: null as number | null
   });
 
-  // Apply filters whenever they change
   useEffect(() => {
     const applyFilters = async () => {
       let filtered = initialPokemon;
@@ -69,16 +65,28 @@ export function PokemonList({ initialPokemon }: PokemonListProps) {
         setLoading(true);
         try {
           const controller = new GameController();
-          const { data: versionPokemon } = await controller.getVersionGroupPokemon(filters.gameId);
-          if (versionPokemon) {
+          const { data: versionPokemon, dexNumbers: newDexNumbers } = 
+            await controller.getVersionGroupPokemon(filters.gameId);
+            
+          if (versionPokemon && newDexNumbers) {
             const versionIds = new Set(versionPokemon);
             filtered = filtered.filter(pokemon => versionIds.has(pokemon.id));
+            
+            // Sort by regional dex number
+            setDexNumbers(newDexNumbers);
+            filtered = filtered.sort((a, b) => 
+              (newDexNumbers[a.id] || a.id) - (newDexNumbers[b.id] || b.id)
+            );
           }
         } catch (error) {
           console.error('Failed to filter by version group:', error);
         } finally {
           setLoading(false);
         }
+      } else {
+        setDexNumbers({});
+        // Sort by national dex when no game is selected
+        filtered = filtered.sort((a, b) => a.id - b.id);
       }
 
       // Apply generation filter
@@ -95,7 +103,6 @@ export function PokemonList({ initialPokemon }: PokemonListProps) {
     applyFilters();
   }, [filters, initialPokemon]);
 
-  // Filter handlers
   const handleSearch = (term: string) => {
     setFilters(prev => ({ ...prev, search: term }));
   };
@@ -121,20 +128,19 @@ export function PokemonList({ initialPokemon }: PokemonListProps) {
         <GenerationFilter onGenerationSelect={handleGenerationSelect} />
       </div>
       
-      {/* Results count */}
       {filters.gameId && !loading && (
         <div className="text-sm text-gray-600">
           Showing {filteredPokemon.length} Pokémon available in this version
         </div>
       )}
 
-      {/* Pokemon grid with loading state */}
       {loading ? (
         <LoadingState />
       ) : (
         <PokemonGrid 
           pokemon={filteredPokemon}
           selectedGameId={filters.gameId}
+          dexNumbers={dexNumbers}
         />
       )}
     </div>
