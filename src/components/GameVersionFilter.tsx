@@ -2,9 +2,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Game } from '@/models/Game.model';
+import { Game } from '@/models/VersionGroup.model';
 import { Gamepad2, ChevronDown, ChevronRight } from 'lucide-react';
-import { GameController } from '@/controllers/Game.Controller';
+import { GameController } from '@/controllers/VersionGroup.controller';
 
 interface GameVersionFilterProps {
   onGameSelect: (gameId: number | null) => void;

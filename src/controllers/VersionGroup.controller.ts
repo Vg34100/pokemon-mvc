@@ -1,5 +1,5 @@
 // src/controllers/Game.controller.ts
-import { GameModel, Game, VersionGroupResponse, VersionPokemonResponse } from '@/models/Game.model';
+import { GameModel, Game, VersionGroupResponse, VersionPokemonResponse } from '@/models/VersionGroup.model';
 
 export class GameController {
   private model: GameModel;
