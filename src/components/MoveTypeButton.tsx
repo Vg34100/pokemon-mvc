@@ -1,36 +1,36 @@
 // src/components/MoveTypeButton.tsx
 interface MoveTypeProps {
-    type: string;
-    className?: string;
-  }
-  
-const typeColors: { [key: string]: { bg: string; text: string } } = {
-    normal: { bg: "bg-gray-100", text: "text-gray-800" },
-    fire: { bg: "bg-red-100", text: "text-red-800" },
-    water: { bg: "bg-blue-100", text: "text-blue-800" },
-    electric: { bg: "bg-yellow-100", text: "text-yellow-800" },
-    grass: { bg: "bg-green-100", text: "text-green-800" },
-    ice: { bg: "bg-cyan-100", text: "text-cyan-800" },
-    fighting: { bg: "bg-orange-100", text: "text-orange-800" },
-    poison: { bg: "bg-purple-100", text: "text-purple-800" },
-    ground: { bg: "bg-amber-100", text: "text-amber-800" },
-    flying: { bg: "bg-indigo-100", text: "text-indigo-800" },
-    psychic: { bg: "bg-pink-100", text: "text-pink-800" },
-    bug: { bg: "bg-lime-100", text: "text-lime-800" },
-    rock: { bg: "bg-stone-100", text: "text-stone-800" },
-    ghost: { bg: "bg-purple-100", text: "text-purple-800" },
-    dragon: { bg: "bg-violet-100", text: "text-violet-800" },
-    dark: { bg: "bg-neutral-100", text: "text-neutral-800" },
-    steel: { bg: "bg-zinc-100", text: "text-zinc-800" },
-    fairy: { bg: "bg-rose-100", text: "text-rose-800" }
-  };
-  
+  type: string;
+  className?: string;
+}
+
+export const typeColors: { [key: string]: { bg: string; text: string } } = {
+  normal: { bg: "bg-gray-300", text: "text-gray-900" },
+  fire: { bg: "bg-red-500", text: "text-white" },
+  water: { bg: "bg-blue-500", text: "text-white" },
+  electric: { bg: "bg-yellow-400", text: "text-black" },
+  grass: { bg: "bg-green-500", text: "text-white" },
+  ice: { bg: "bg-cyan-300", text: "text-black" },
+  fighting: { bg: "bg-orange-600", text: "text-white" },
+  poison: { bg: "bg-purple-500", text: "text-white" },
+  ground: { bg: "bg-yellow-600", text: "text-black" },
+  flying: { bg: "bg-indigo-400", text: "text-white" },
+  psychic: { bg: "bg-pink-500", text: "text-white" },
+  bug: { bg: "bg-lime-500", text: "text-black" },
+  rock: { bg: "bg-stone-500", text: "text-white" },
+  ghost: { bg: "bg-purple-800", text: "text-white" },
+  dragon: { bg: "bg-violet-700", text: "text-white" },
+  dark: { bg: "bg-neutral-800", text: "text-white" },
+  steel: { bg: "bg-gray-500", text: "text-white" },
+  fairy: { bg: "bg-pink-300", text: "text-black" }
+};
+
 export function MoveTypeButton({ type, className = "" }: MoveTypeProps) {
-    const colors = typeColors[type] || typeColors.normal;
-    
-    return (
-      <span className={`px-2 py-1 rounded text-sm capitalize ${colors.bg} ${colors.text} ${className}`}>
-        {type}
-      </span>
-    );
-  }
+  const colors = typeColors[type] || typeColors.normal;
+  
+  return (
+    <span className={`px-2 py-1 rounded text-sm capitalize ${colors.bg} ${colors.text} ${className}`}>
+      {type}
+    </span>
+  );
+}
