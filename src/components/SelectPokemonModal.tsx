@@ -7,7 +7,7 @@ import { PokemonController } from '@/controllers/Pokemon.controller';
 import { SearchBar } from './SearchBar';
 import Image from 'next/image';
 import { X } from 'lucide-react';
-import { GameController } from '@/controllers/Game.Controller';
+import { GameController } from '@/controllers/VersionGroup.controller';
 
 interface SelectPokemonModalProps {
   gameId: number;
